@@ -2,6 +2,7 @@ package cc.makepower.cl_bleconnecttest;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -15,28 +16,40 @@ import com.inuker.bluetooth.library.search.SearchRequest;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import cc.makepower.cl_bleconnecttest.base.APresenter;
+import cc.makepower.cl_bleconnecttest.base.BaseActivity;
+import cc.makepower.cl_bleconnecttest.bean.DeviceNameBean;
+
+public class MainActivity extends BaseActivity implements MainContract.View {
     private boolean accpetPermission = false;//有没有获取到所有的权限
     Button btn_StartTest;//开始测试的按钮
     BluetoothClient mClient;
     private String[] permissions = {Manifest.permission.LOCATION_HARDWARE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
     };
-
+    MainPresenter mainPresenter;
     private List<SearchResult> searchResults;//搜索到的蓝牙设备结果集
+    private ArrayList<DeviceNameBean> deviceNameBeanArrayList = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void afterInCreate(Bundle savedInstanceState) {
         btn_StartTest = findViewById(R.id.btn_StartTest);
         mClient = new BluetoothClient(MainActivity.this);
         searchResults = new ArrayList<>();
         checkLocationPermission();
+
 
 
         btn_StartTest.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!accpetPermission) {
                     checkLocationPermission();
+                    return;
+                }
+                if (deviceNameBeanArrayList.size() == 0) {
+                    showToast("本地文件未配置测试项");
                     return;
                 }
                 if (!mClient.isBluetoothOpened()) {
@@ -60,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected APresenter injectPresenter() {
+        mainPresenter = new MainPresenter(MainActivity.this);
+        return mainPresenter;
     }
 
 
@@ -105,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, permissions, 1001);
         } else {
             accpetPermission = true;
+            mainPresenter.fectchLocalXMLsDeviceList(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "CC_BleTest"+ File.separator+"蓝牙测试名称.xls"));
+
+
         }
     }
 
@@ -119,11 +145,21 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (permissionAccept) {
                     accpetPermission = true;
+                    mainPresenter.fectchLocalXMLsDeviceList(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "CC_BleTest"+ File.separator+"蓝牙测试名称.xls"));
+
+
                 } else {
-                    System.exit(0);
+                    mainPresenter.fectchLocalXMLsDeviceList(new File(Environment.getExternalStorageDirectory().getPath() + File.separator + "CC_BleTest"+ File.separator+"蓝牙测试名称.xls"));
+
+//                    System.exit(0);
                 }
                 break;
         }
     }
 
+    @Override
+    public void fectchLocalXMLsDeviceListCallBack(ArrayList<DeviceNameBean> deviceNameBeans) {
+        deviceNameBeanArrayList.clear();
+        deviceNameBeanArrayList.addAll(deviceNameBeans);
+    }
 }
