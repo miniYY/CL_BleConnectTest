@@ -4,7 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_State"
+        android:layout_width="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="开始测试.."
+        android:layout_height="100dp" />
 
    <Button
        android:id="@+id/btn_StartTest"

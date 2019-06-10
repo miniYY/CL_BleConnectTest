@@ -1,4 +1,4 @@
-package cc.makepower.cl_bleconnecttest;
+package cc.makepower.cl_bleconnecttest.activity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -6,10 +6,10 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.search.SearchRequest;
@@ -20,13 +20,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import cc.makepower.cl_bleconnecttest.R;
 import cc.makepower.cl_bleconnecttest.base.APresenter;
 import cc.makepower.cl_bleconnecttest.base.BaseActivity;
 import cc.makepower.cl_bleconnecttest.bean.DeviceNameBean;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
     private boolean accpetPermission = false;//有没有获取到所有的权限
+    @BindView(R.id.btn_StartTest)
     Button btn_StartTest;//开始测试的按钮
+    @BindView(R.id.tv_State)
+    TextView tv_State;//开始测试的按钮
+
     BluetoothClient mClient;
     private String[] permissions = {Manifest.permission.LOCATION_HARDWARE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -38,6 +44,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     private List<SearchResult> searchResults;//搜索到的蓝牙设备结果集
     private ArrayList<DeviceNameBean> deviceNameBeanArrayList = new ArrayList<>();
 
+
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -45,7 +54,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
 
     @Override
     protected void afterInCreate(Bundle savedInstanceState) {
-        btn_StartTest = findViewById(R.id.btn_StartTest);
         mClient = new BluetoothClient(MainActivity.this);
         searchResults = new ArrayList<>();
         checkLocationPermission();

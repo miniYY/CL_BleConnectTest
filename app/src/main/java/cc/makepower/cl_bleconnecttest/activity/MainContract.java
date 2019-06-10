@@ -1,4 +1,4 @@
-package cc.makepower.cl_bleconnecttest;
+package cc.makepower.cl_bleconnecttest.activity;
 
 import java.util.ArrayList;
 

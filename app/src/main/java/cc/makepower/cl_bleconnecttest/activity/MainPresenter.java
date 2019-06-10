@@ -1,11 +1,9 @@
-package cc.makepower.cl_bleconnecttest;
+package cc.makepower.cl_bleconnecttest.activity;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import cc.makepower.cl_bleconnecttest.base.APresenter;
 import cc.makepower.cl_bleconnecttest.bean.DeviceNameBean;
